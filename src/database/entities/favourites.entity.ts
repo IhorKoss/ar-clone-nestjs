@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -12,6 +13,7 @@ import { TableNameEnum } from './enums/table-name.enum';
 import { CreateUpdateModel } from './models/create-update.model';
 import { UserEntity } from './user.entity';
 
+@Index(['user_id', 'ad_id'], { unique: true })
 @Entity(TableNameEnum.FAVOURITES)
 export class FavouritesEntity extends CreateUpdateModel {
   @PrimaryGeneratedColumn('uuid')

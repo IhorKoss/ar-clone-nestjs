@@ -1,7 +1,12 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 
 import { ProfanityFilter } from '../../../common/filters/profanity.filter';
-import { AdID } from '../../../common/types/entity-ids.type';
+import { AdID, UserID } from '../../../common/types/entity-ids.type';
 import { AdEntity, AdStatus } from '../../../database/entities/ad.entity';
 import { CarBrandEntity } from '../../../database/entities/car_brand.entity';
 import { CarModelEntity } from '../../../database/entities/car_model.entity';
@@ -10,6 +15,7 @@ import { IUserData } from '../../auth/models/interfaces/user-data.interface';
 import { AdRepository } from '../../repository/services/ad.repository';
 import { CarBrandRepository } from '../../repository/services/car_brand.repository';
 import { CarModelRepository } from '../../repository/services/car_model.repository';
+import { FavouritesRepository } from '../../repository/services/favourites.repository';
 import { UserRepository } from '../../repository/services/user.repository';
 import { CreateAdReqDto } from '../dto/req/create-ad.req.dto';
 import { ListAdQueryDto } from '../dto/req/list-ad-query.req.dto';
@@ -24,6 +30,7 @@ export class AdsService {
     private readonly brandRepository: CarBrandRepository,
     private readonly modelRepository: CarModelRepository,
     private readonly currencyService: CurrencyService,
+    private readonly favouritesRepository: FavouritesRepository,
   ) {}
 
   public async create(
@@ -58,14 +65,16 @@ export class AdsService {
   }
 
   public async findAll(
-    userData: IUserData,
     query: ListAdQueryDto,
+    userData: IUserData,
   ): Promise<[AdEntity[], number]> {
-    return await this.adRepository.findAll(userData, query);
+    return await this.adRepository.findAll(query, userData);
   }
 
-  public async findOne(adId: AdID): Promise<AdEntity> {
-    return await this.adRepository.getById(adId);
+  public async findOne(adId: AdID, userData: IUserData): Promise<AdEntity> {
+    const result = await this.adRepository.getById(adId, userData);
+    console.log(result.favourites);
+    return result;
   }
 
   public async findMy(userData: IUserData): Promise<[AdEntity[], number]> {
@@ -77,7 +86,7 @@ export class AdsService {
     adId: AdID,
     dto: UpdateAdReqDto,
   ): Promise<AdEntity> {
-    const ad = await this.adRepository.getById(adId);
+    const ad = await this.adRepository.getById(adId, userData);
     if (ad.user_id !== userData.userId) {
       throw new BadRequestException('You cant edit this ad');
     }
@@ -120,5 +129,46 @@ export class AdsService {
     } else {
       return entity;
     }
+  }
+
+  public async addToFavourites(userData: IUserData, adId: AdID): Promise<void> {
+    const ad = await this.adRepository.findOneBy({ id: adId });
+    console.log(adId);
+    if (!ad) {
+      throw new NotFoundException('Ad not found');
+    }
+    const favourite = await this.favouritesRepository.findOneBy({
+      user_id: userData.userId,
+      ad_id: adId,
+    });
+    if (favourite) {
+      throw new ConflictException('You already added this ad to favourites');
+    }
+    await this.favouritesRepository.save(
+      this.favouritesRepository.create({
+        user_id: userData.userId,
+        ad_id: adId,
+      }),
+    );
+  }
+
+  public async removeFromFavourites(
+    userData: IUserData,
+    adId: AdID,
+  ): Promise<void> {
+    const ad = await this.adRepository.findOneBy({ id: adId });
+    if (!ad) {
+      throw new NotFoundException('Ad not found');
+    }
+    const favourite = await this.favouritesRepository.findOneBy({
+      user_id: userData.userId,
+      ad_id: adId,
+    });
+    if (!favourite) {
+      throw new ConflictException(
+        'You have not added this ad to favourites yet',
+      );
+    }
+    await this.favouritesRepository.remove(favourite);
   }
 }

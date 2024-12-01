@@ -2,7 +2,6 @@ export type Config = {
   app: AppConfig;
   database: DatabaseConfig;
   redis: RedisConfig;
-  aws: AwsConfig;
   jwt: JwtConfig;
 };
 
@@ -21,10 +20,6 @@ export type RedisConfig = {
   host: string;
   port: number;
   password: string;
-};
-export type AwsConfig = {
-  accessKey: string;
-  secretKey: string;
 };
 export type JwtConfig = {
   accessSecret: string;

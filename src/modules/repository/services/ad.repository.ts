@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 
-import { AdID } from '../../../common/types/entity-ids.type';
+import { AdID, UserID } from '../../../common/types/entity-ids.type';
 import { AdEntity, AdStatus } from '../../../database/entities/ad.entity';
 import { ListAdQueryDto } from '../../ads/dto/req/list-ad-query.req.dto';
 import { IUserData } from '../../auth/models/interfaces/user-data.interface';
@@ -13,15 +13,20 @@ export class AdRepository extends Repository<AdEntity> {
   }
 
   public async findAll(
-    userData: IUserData,
     query: ListAdQueryDto,
+    userData: IUserData,
   ): Promise<[AdEntity[], number]> {
     const qb = this.createQueryBuilder('ad');
     qb.leftJoinAndSelect('ad.user', 'user');
     qb.leftJoinAndSelect('ad.brand', 'brand');
     qb.leftJoinAndSelect('ad.model', 'model');
-    // qb.leftJoinAndSelect('article.likes', 'like', 'like.user_id = :userId');
+    qb.leftJoinAndSelect(
+      'ad.favourites',
+      'favourite',
+      'favourite.user_id = :userId',
+    );
     qb.setParameter('userId', userData.userId);
+
     qb.andWhere('ad.status != :status', { status: AdStatus.INACTIVE });
     if (query.search) {
       qb.andWhere('CONCAT(ad.title, ad.description) ILIKE :search');
@@ -47,8 +52,14 @@ export class AdRepository extends Repository<AdEntity> {
     qb.andWhere('ad.status = :status', { status: AdStatus.INACTIVE });
     return await qb.getManyAndCount();
   }
-  public async getById(adId: AdID): Promise<AdEntity> {
+  public async getById(adId: AdID, userData: IUserData): Promise<AdEntity> {
     const qb = this.createQueryBuilder('ad');
+    qb.leftJoinAndSelect(
+      'ad.favourites',
+      'favourite',
+      'favourite.user_id = :userId',
+    );
+    qb.setParameter('userId', userData.userId);
     qb.leftJoinAndSelect('ad.user', 'user');
     qb.leftJoinAndSelect('ad.brand', 'brand');
     qb.leftJoinAndSelect('ad.model', 'model');

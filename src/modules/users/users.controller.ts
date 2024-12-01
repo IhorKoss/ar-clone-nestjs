@@ -9,7 +9,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { UserID } from '../../common/types/entity-ids.type';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
@@ -37,12 +37,20 @@ export class UsersController {
   ) {}
 
   @Get('me')
+  @ApiOperation({
+    summary: 'Get current user',
+    description: 'Shows current user',
+  })
   public async findMe(@CurrentUser() userData: IUserData): Promise<UserResDto> {
     const result = await this.usersService.findMe(userData);
     return UserMapper.toResDto(result);
   }
 
   @Patch('me')
+  @ApiOperation({
+    summary: 'Update current user',
+    description: 'Updates current user',
+  })
   public async updateMe(
     @CurrentUser() userData: IUserData,
     @Body() updateUserDto: UpdateUserReqDto,
@@ -51,12 +59,32 @@ export class UsersController {
     return UserMapper.toResDto(result);
   }
 
+  @Patch('me/premium')
+  @ApiOperation({
+    summary: 'Purchase premium',
+    description: 'Purchases premium account',
+  })
+  public async purchasePremium(
+    @CurrentUser() userData: IUserData,
+  ): Promise<UserResDto> {
+    const result = await this.usersService.purchasePremium(userData);
+    return UserMapper.toResDto(result);
+  }
+
   @Delete('me')
+  @ApiOperation({
+    summary: 'Remove current user',
+    description: 'Removes current user',
+  })
   public async removeMe(@CurrentUser() userData: IUserData): Promise<void> {
     return await this.usersService.removeMe(userData);
   }
 
   @Get(':userId')
+  @ApiOperation({
+    summary: 'Get user by id',
+    description: 'Shows user by id',
+  })
   public async findOne(
     @Param('userId', ParseUUIDPipe) userId: UserID,
   ): Promise<UserResDto> {
@@ -65,6 +93,10 @@ export class UsersController {
   }
 
   @AdminRequired()
+  @ApiOperation({
+    summary: 'Create manager',
+    description: 'ATTENTION: only for admins. Creates manager account',
+  })
   @Post('create-manager')
   public async createManager(
     @Body() signUpReqDto: SignUpReqDto,
@@ -73,6 +105,10 @@ export class UsersController {
   }
 
   @ManagerRequired()
+  @ApiOperation({
+    summary: 'Ban user',
+    description: 'ATTENTION: only for managers and above. Bans user',
+  })
   @Post('ban/:userId')
   public async banUser(
     @Param('userId', ParseUUIDPipe) userId: UserID,

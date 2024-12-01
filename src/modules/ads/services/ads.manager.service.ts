@@ -28,7 +28,7 @@ export class AdsManagerService {
   }
 
   public async deleteAd(adId: AdID): Promise<string> {
-    const ad = await this.adRepository.getById(adId);
+    const ad = await this.adRepository.findOneBy({ id: adId });
     if (!ad) {
       throw new BadRequestException('Ad not found');
     }

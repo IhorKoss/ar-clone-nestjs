@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { SourceCode } from 'eslint';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { UserID } from '../../../common/types/entity-ids.type';
+import { AccountType } from '../../../database/entities/user.entity';
 import { IUserData } from '../../auth/models/interfaces/user-data.interface';
 import { RefreshTokenRepository } from '../../repository/services/refresh-token.repository';
 import { UserRepository } from '../../repository/services/user.repository';
@@ -30,6 +30,15 @@ export class UsersService {
       { deleted: new Date() },
     );
     await this.refreshTokenRepository.delete({ user_id: userData.userId });
+  }
+
+  public async purchasePremium(userData: IUserData) {
+    const user = await this.userRepository.findOneBy({ id: userData.userId });
+    if (user.accountType === AccountType.PREMIUM) {
+      throw new BadRequestException('You already has a premium account');
+    }
+    user.accountType = AccountType.PREMIUM;
+    return await this.userRepository.save(user);
   }
 
   public async removeUserById(userId: UserID) {

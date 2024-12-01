@@ -30,6 +30,7 @@ export class AdsMapper {
       created: data.created,
       updated: data.updated,
       status: data.status,
+      isInFavourites: !!data.favourites?.length,
       user_id: data.user.id,
       editAttempts: data.editAttempts,
     };
