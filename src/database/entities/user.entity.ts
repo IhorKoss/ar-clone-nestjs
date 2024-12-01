@@ -1,7 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { UserID } from '../../common/types/entity-ids.type';
-import { Ad } from '../../modules/ads/entities/ad.entity';
 import { AdEntity } from './ad.entity';
 import { TableNameEnum } from './enums/table-name.enum';
 import { FavouritesEntity } from './favourites.entity';
@@ -47,6 +46,9 @@ export class UserEntity extends CreateUpdateModel {
     default: AccountType.BASIC,
   })
   accountType: AccountType;
+
+  @Column('timestamp', { nullable: true })
+  deleted?: Date;
 
   @OneToMany(() => RefreshTokenEntity, (entity) => entity.user)
   refreshTokens?: RefreshTokenEntity[];

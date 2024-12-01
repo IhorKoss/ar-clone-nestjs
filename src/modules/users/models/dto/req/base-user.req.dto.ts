@@ -16,15 +16,13 @@ export class BaseUserReqDto {
   @Type(() => String)
   name?: string;
 
-  @ApiProperty({ example: 'test@gmail.com' })
+  @ApiProperty({ example: 'devtest@gmail.com' })
   @IsString()
-  @Length(0, 300)
   @Matches(/^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/)
   email: string;
 
-  @ApiProperty({ example: '123qwe!@#QWE' })
+  @ApiProperty({ example: 'Devtest_12345' })
   @IsString()
-  @Length(0, 300)
   @Matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%_*#?&])[A-Za-z\d@$_!%*#?&]{8,}$/)
   password: string;
 

@@ -7,3 +7,4 @@ export type CarModelID = Opaque<string, 'CarModelID'>;
 export type RefreshTokenID = Opaque<string, 'RefreshTokenID'>;
 export type FavouritesID = Opaque<string, 'FavouritesID'>;
 export type UserID = Opaque<string, 'UserID'>;
+export type BannedEmailID = Opaque<string, 'BannedEmailID'>;

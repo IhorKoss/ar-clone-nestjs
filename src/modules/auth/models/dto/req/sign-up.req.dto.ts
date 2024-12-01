@@ -5,8 +5,6 @@ import { BaseAuthReqDto } from './base-auth.req.dto';
 export class SignUpReqDto extends PickType(BaseAuthReqDto, [
   'email',
   'password',
-  'role',
-  'accountType',
   'name',
   'deviceId',
 ]) {}

@@ -42,8 +42,11 @@ export class AdEntity extends CreateUpdateModel {
   @Column()
   title: string;
 
+  @Column('text')
+  description: string;
+
   @Column('text', { nullable: true })
-  description?: string;
+  phone: string;
 
   @Column('decimal', { precision: 10, scale: 2 })
   price: number;
@@ -55,10 +58,16 @@ export class AdEntity extends CreateUpdateModel {
   })
   currency: AdCurrency;
 
+  @Column('json', { default: {} })
+  convertedPrices: { usd: number; eur: number; uah: number };
+
+  @Column('json', { default: {} })
+  exchangeRates: { usd: number; eur: number; uah: number };
+
   @Column({
     type: 'enum',
     enum: AdStatus,
-    default: AdStatus.PENDING,
+    default: AdStatus.ACTIVE,
   })
   status: AdStatus;
 
@@ -68,21 +77,24 @@ export class AdEntity extends CreateUpdateModel {
   @JoinColumn({ name: 'user_id' })
   user?: UserEntity;
 
-  @Column()
+  @Column('uuid', { nullable: true })
   brand_id: CarBrandID;
   @ManyToOne(() => CarBrandEntity, (entity) => entity.ads)
   @JoinColumn({ name: 'brand_id' })
-  brand?: UserEntity;
+  brand?: CarBrandEntity;
 
-  @Column()
+  @Column('uuid', { nullable: true })
   model_id: CarModelID;
   @ManyToOne(() => CarModelEntity, (entity) => entity.ads)
   @JoinColumn({ name: 'model_id' })
-  model?: UserEntity;
+  model?: CarModelEntity;
 
   @OneToMany(() => FavouritesEntity, (entity) => entity.ad)
   favourites?: FavouritesEntity[];
 
   @OneToOne(() => AnalyticsEntity, (entity) => entity.ad)
   analytics?: AnalyticsEntity;
+
+  @Column({ type: 'int', default: 0 })
+  editAttempts: number;
 }

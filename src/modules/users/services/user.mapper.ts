@@ -17,6 +17,8 @@ export class UserMapper {
     return {
       userId: user.id,
       deviceId: jwtPayload.deviceId,
+      accountType: user.accountType,
+      role: user.role,
       email: user.email,
     };
   }
