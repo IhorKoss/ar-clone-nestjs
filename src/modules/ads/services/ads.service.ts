@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 
 import { ProfanityFilter } from '../../../common/filters/profanity.filter';
-import { AdID, UserID } from '../../../common/types/entity-ids.type';
+import { AdID } from '../../../common/types/entity-ids.type';
 import { AdEntity, AdStatus } from '../../../database/entities/ad.entity';
 import { CarBrandEntity } from '../../../database/entities/car_brand.entity';
 import { CarModelEntity } from '../../../database/entities/car_model.entity';
@@ -73,7 +73,6 @@ export class AdsService {
 
   public async findOne(adId: AdID, userData: IUserData): Promise<AdEntity> {
     const result = await this.adRepository.getById(adId, userData);
-    console.log(result.favourites);
     return result;
   }
 
@@ -133,7 +132,6 @@ export class AdsService {
 
   public async addToFavourites(userData: IUserData, adId: AdID): Promise<void> {
     const ad = await this.adRepository.findOneBy({ id: adId });
-    console.log(adId);
     if (!ad) {
       throw new NotFoundException('Ad not found');
     }

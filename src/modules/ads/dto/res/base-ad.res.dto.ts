@@ -1,7 +1,4 @@
-import { FavouritesID } from '../../../../common/types/entity-ids.type';
 import { AdStatus } from '../../../../database/entities/ad.entity';
-import { FavouritesEntity } from '../../../../database/entities/favourites.entity';
-import { UserResDto } from '../../../users/models/dto/res/user.res.dto';
 
 export class BaseAdResDto {
   id: string;

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { APP_FILTER } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
 
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
@@ -11,7 +11,6 @@ import { LoggerModule } from './modules/logger/logger.module';
 import { PostgresModule } from './modules/postgress/postgress.module';
 import { RedisModule } from './modules/redis/redis.module';
 import { RepositoryModule } from './modules/repository/repository.module';
-import { RolesGuard } from './modules/users/guards/roles.guard';
 import { UsersModule } from './modules/users/users.module';
 
 @Module({

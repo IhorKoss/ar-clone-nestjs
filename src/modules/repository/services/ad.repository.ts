@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 
-import { AdID, UserID } from '../../../common/types/entity-ids.type';
+import { AdID } from '../../../common/types/entity-ids.type';
 import { AdEntity, AdStatus } from '../../../database/entities/ad.entity';
 import { ListAdQueryDto } from '../../ads/dto/req/list-ad-query.req.dto';
 import { IUserData } from '../../auth/models/interfaces/user-data.interface';

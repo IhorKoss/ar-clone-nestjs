@@ -39,7 +39,7 @@ export class TokenService {
         secret: this.getSecret(type),
       });
     } catch (e) {
-      throw new UnauthorizedException('Invalid token');
+      throw new UnauthorizedException(`Invalid token: ${e}`);
     }
   }
 

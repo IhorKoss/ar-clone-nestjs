@@ -14,7 +14,6 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserID } from '../../common/types/entity-ids.type';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { SignUpReqDto } from '../auth/models/dto/req/sign-up.req.dto';
-import { AuthResDto } from '../auth/models/dto/res/auth.res.dto';
 import { IUserData } from '../auth/models/interfaces/user-data.interface';
 import { AuthService } from '../auth/services/auth.service';
 import { AdminRequired, ManagerRequired } from './decorators/roles.decorator';

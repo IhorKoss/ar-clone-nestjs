@@ -61,10 +61,6 @@ export class AuthService {
     const user = await this.userRepository.save(
       this.userRepository.create({ ...dto, password, role: UserRole.MANAGER }),
     );
-    const tokens = await this.tokenService.generateAuthTokens({
-      userId: user.id,
-      deviceId: dto.deviceId,
-    });
 
     return UserMapper.toResDto(user);
   }
